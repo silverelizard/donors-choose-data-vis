@@ -26,14 +26,16 @@ var g = svg.append("g");
 d3.json("us.json", function(error, us) {
   if (error) throw error;
 
-  us.objects.states.geometries.forEach(function(element, index, array) {
-    element['statecode'] = usMap[element["id"]];
-  });
 
-  g.append("g")
-      .attr("id", "states")
+
+    var features = topojson.feature(us, us.objects.states).features;
+    features.forEach(function(element, index, array) {
+        element['statecode'] = usMap[element["id"]];
+    });
+    g.append("g")
+      .attr("id", "states", 'statecode')
     .selectAll("path")
-      .data(topojson.feature(us, us.objects.states).features)
+      .data(features)
     .enter().append("path")
       .attr("d", path)
       .on("click", clicked);
@@ -45,6 +47,7 @@ d3.json("us.json", function(error, us) {
 });
 
 function clicked(d) {
+    console.log(d.statecode);
   var x, y, k;
 
   if (d && centered !== d) {
