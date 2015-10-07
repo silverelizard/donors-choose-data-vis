@@ -25,7 +25,7 @@ $(function () {
 
     var g = svg.append("g");
 
-    var colorScale = d3.scale.linear().domain([10, 50]).range([-255, 255]);
+    var colorScale = d3.scale.linear().domain([0, 50]).range([-255, 255]);
 
     d3.json("us.json", function (error, us) {
         if (error) throw error;
@@ -43,9 +43,9 @@ $(function () {
                 var offset = colorScale(d.id);
                 if (offset < 0) {
                     offset = Math.abs(offset);
-                    return d3.rgb(255, 255 - offset, 255 - offset);
+                    return d3.rgb(200, 200 - offset, 200 - offset);
                 }
-                return d3.rgb(255 - offset, 255, 255 - offset);
+                return d3.rgb(200 - offset, 200, 200 - offset);
             })
             .on("click", clicked)
             .attr('alt', function (d) {
