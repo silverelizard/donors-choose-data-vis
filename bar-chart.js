@@ -3,9 +3,23 @@ function barChart(stateCode) {
         function(err, stateData) {
             query('https://31h0fuyx4f.execute-api.us-west-2.amazonaws.com/prod/projects/categories/',
                 function(err, avgData) {
-                    console.log(avgData);
-                    console.log(stateData);
                     pieChart(stateCode, stateData);
+                    var combinedData = [];
+                    for (var i = 0; i < stateData.length; i++) {
+                        var obj = stateData[i];
+                        for (var j = 0; j < avgData.length; j++) {
+                            var avg = avgData[j];
+                            if (obj['primary_focus_area'] === avg['primary_focus_area']) {
+                                var diff = obj['total'] - avg['national_average'];
+                                combinedData.push({
+                                    label: obj['primary_focus_area'],
+                                    value: diff
+                                });
+                                break;
+                            }
+                        }
+                    }
+                    makeChart(combinedData);
                 });
         });
 }
@@ -15,14 +29,15 @@ function makeChart(data) {
     var barPadding = 1;
 
     var margin = {top: 5, right: 5, bottom: 5, left: 5},
-        width = 400 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 450,
+        height = 300;
 
-// var x0 = Math.max(-d3.min(data), d3.max(data));
-// var x1 = Math.max(d3.max(data));
+    var values = data.map(function(datum) {
+        return datum.value;
+    });
 
-    var x0 = 36;
-    var x1 = 10;
+    var x0 = Math.max(-d3.min(values), d3.max(values)) * 1.35;
+    var x1 = Math.max(d3.max(values)) * 1.35;
 
     var x = d3.scale.linear()
         .domain([-x0, x1])
@@ -46,7 +61,8 @@ function makeChart(data) {
         .attr("class", function(d, i) { return d.value < 0 ? "bar negative" : "bar positive"; })
         .attr("x", function(d, i) { return x(Math.min(0, d.value)); })
         .attr("y", function(d, i) { return y(i); })
-        .attr("width", function(d, i) { return Math.abs(x(d.value) - x(0)); })
+        .attr("width", function(d, i) {
+            return Math.abs(x(d.value) - x(0)); })
         .attr("height", y.rangeBand());
 
     svg.append("g")

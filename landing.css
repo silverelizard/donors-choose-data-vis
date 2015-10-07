@@ -69,6 +69,7 @@
 }
 
 #summary {
+  padding: 20px 20px;
   position: absolute;
   height: 450px;
   width: 100%;
@@ -90,4 +91,31 @@
 
 #pie-chart {
   margin: 0 auto;
+}
+
+.bar.positive {
+  fill: #143D66;
+}
+
+.bar.negative {
+  fill: #7F99B2;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#bar-chart {
+  float: left;
+}
+
+#pie-chart {
+  width: 400px;
+  float: left;
 }

@@ -131,6 +131,7 @@ $(function () {
         pie.destroy();
         pie = null;
         clicked(null);
+        $('#bar-chart').html('');
         summary = false;
     }
 

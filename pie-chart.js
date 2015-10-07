@@ -19,8 +19,8 @@ function pieChart(state, data) {
       "titleSubtitlePadding": 12
     },
     "size": {
-      "canvasHeight": 250,
-      "canvasWidth": 400,
+      "canvasHeight": 300,
+      "canvasWidth": 500,
       "pieOuterRadius": "88%"
     },
     "data": {
