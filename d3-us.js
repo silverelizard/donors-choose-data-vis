@@ -56,15 +56,15 @@ $(function () {
                 .on("mousemove", function (d) {
                     var html = "";
 
-                    html += "<div class=\"tooltip_kv\">";
+                    html += "<h5 class=\"tooltip_kv\">";
                     html += "<span class=\"tooltip_key\">";
-                    html += d.statecode;
+                    html += d.statecode + " Total Donated";
                     html += "</span>: ";
                     html += "<span class=\"tooltip_value\">";
-                    html += d.total;
+                    html += "$" + numberWithCommas(d.total);
                     html += "";
                     html += "</span>";
-                    html += "</div>";
+                    html += "</h5>";
 
                     $("#tooltip-container").html(html);
                     $(this).attr("fill-opacity", "0.8");
@@ -138,7 +138,6 @@ $(function () {
         var x, y, k;
 
         if (d && centered !== d) {
-            console.log(d.statecode);
 
             var centroid = path.centroid(d);
             x = centroid[0];
@@ -163,6 +162,10 @@ $(function () {
             .duration(750)
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
             .style("stroke-width", 1.5 / k + "px");
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     var usMap = {
