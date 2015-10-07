@@ -1,5 +1,14 @@
 var pie;
-function pieChart(state) {
+function pieChart(state, data) {
+  var colorMap = ["#7e3838", "#7e6538", "#7c7e38", "#587e38", "#387e45", "#387e6a", "#386a7e", "#daca61"];
+  var content = [];
+  for(var i=0; i<data.length; i++) {
+    content.push({
+      "label": data[i].primary_focus_area,
+      "value": parseFloat(data[i].total),
+      "color": colorMap[i]
+    });
+  }
   pie = new d3pie("pie-chart", {
     "header": {
       "title": {
@@ -11,47 +20,11 @@ function pieChart(state) {
     },
     "size": {
       "canvasHeight": 250,
-      "canvasWidth": 350,
+      "canvasWidth": 400,
       "pieOuterRadius": "88%"
     },
     "data": {
-      "content": [
-        {
-          "label": "When's it going to be done?",
-          "value": 8,
-          "color": "#7e3838"
-        },
-        {
-          "label": "Bennnnn!",
-          "value": 5,
-          "color": "#7e6538"
-        },
-        {
-          "label": "Oh, god.",
-          "value": 2,
-          "color": "#7c7e38"
-        },
-        {
-          "label": "But it's Friday night!",
-          "value": 3,
-          "color": "#587e38"
-        },
-        {
-          "label": "Again?",
-          "value": 2,
-          "color": "#387e45"
-        },
-        {
-          "label": "I'm considering an affair.",
-          "value": 1,
-          "color": "#387e6a"
-        },
-        {
-          "label": "[baleful stare]",
-          "value": 3,
-          "color": "#386a7e"
-        }
-      ]
+      "content": content
     },
     "labels": {
       "outer": {
