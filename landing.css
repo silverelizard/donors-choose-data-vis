@@ -7,6 +7,14 @@
   fill: #aaa;
 }
 
+.brand-color {
+  color: #ef5f3c;
+}
+
+#states .active {
+  fill: #ef5f3c;
+}
+
 #state-borders {
   fill: none;
   stroke: #eee;
@@ -25,5 +33,18 @@
 #interactive-map {
   margin-right: auto;
   margin-left: auto;
-  width: 600px;
+}
+
+#header-logo {
+  margin-top: 2%;
+  margin-left: -6%;
+  margin-right: auto;
+  transform: scale(0.8, 0.8);
+  -ms-transform: scale(0.8, 0.8);
+  -webkit-transform: scale(0.8, 0.8);
+}
+
+#call-to-action {
+  width: 343px;
+  margin-right: auto;
 }

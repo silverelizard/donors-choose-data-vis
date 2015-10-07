@@ -1,10 +1,10 @@
 $(function () {
-    var width = 600,
-        height = 375,
+    var width = 1024,
+        height = 500,
         centered;
 
     var projection = d3.geo.albersUsa()
-        .scale(800)
+        .scale(1024)
         .translate([width / 2, height / 2]);
 
     var path = d3.geo.path()
