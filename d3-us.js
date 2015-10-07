@@ -126,6 +126,8 @@ $(function () {
     function unselect() {
         $('#interactive-map').css('opacity', '1');
         $('#summary-container').hide();
+        pie.destroy();
+        pie = null;
         clicked(null);
         summary = false;
     }
