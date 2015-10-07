@@ -7,12 +7,12 @@
   fill: #aaa;
 }
 
-.brand-color {
-  color: #ef5f3c;
+#main {
+  height: 400px;
 }
 
-#states .active {
-  fill: #ef5f3c;
+.brand-color {
+  color: #ef5f3c;
 }
 
 #state-borders {
@@ -47,4 +47,32 @@
 #call-to-action {
   width: 343px;
   margin-right: auto;
+}
+
+#summary-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+
+  display: none;
+}
+
+#summary {
+  position: absolute;
+  height: 450px;
+  width: 100%;
+  background-color: #fff;
+  opacity: 0.7;
+  z-index: 999;
+}
+
+#close-container {
+  position: relative;
+  float: right;
+  right: 0;
+  top: 0;
+  font-size: 2em;
+}
+
+#close {
 }

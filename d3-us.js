@@ -1,7 +1,7 @@
-function initialize(donationDiff) {
-    var width = 600,
-        height = 375,
-        centered;
+$(function () {
+    var centered;
+    var width = window.innerWidth * .75,
+        height = 400;
 
     var projection = d3.geo.albersUsa()
         .scale(800)
@@ -25,88 +25,111 @@ function initialize(donationDiff) {
 
     var g = svg.append("g");
 
-    var colorScale = d3.scale.linear().domain([-1, 1]).range([-255, 255]);
+    function initialize(donationDiff) {
 
-    d3.json("us.json", function (error, us) {
-        if (error) throw error;
-        var features = topojson.feature(us, us.objects.states).features;
-        features.forEach(function (element, index, array) {
-            element['statecode'] = usMap[element["id"]];
-            if (donationDiff.hasOwnProperty(element.statecode)) {
-                var obj = donationDiff[element.statecode];
-                element.devDiff = obj.devDiff;
-                element.total = obj.total;
-            } else {
-                element.devDiff = -Infinity;
-                element.total = 0;
-            }
-        });
 
-        g.attr("id", "states")
-            .selectAll("path")
-            .data(features)
-            .enter().append("path")
-            .attr("d", path)
-            .attr("fill", function (d) {
-                var key = d.devDiff;
-                var offset = colorScale(key);
-                if (offset < 0) {
-                    offset = Math.abs(offset);
-                    return d3.rgb(255, 255 - offset, 255 - offset);
-                }
-                return d3.rgb(255 - offset, 255, 255 - offset);
-            })
-            .on("click", clicked)
-            .attr('alt', function (d) {
-                return d.statecode;
-            })
-            .on("mousemove", function(d) {
-                var html = "";
-
-                html += "<div class=\"tooltip_kv\">";
-                html += "<span class=\"tooltip_key\">";
-                html += d.statecode;
-                html += "</span>: ";
-                html += "<span class=\"tooltip_value\">";
-                html += d.total;
-                html += "";
-                html += "</span>";
-                html += "</div>";
-
-                $("#tooltip-container").html(html);
-                $(this).attr("fill-opacity", "0.8");
-                $("#tooltip-container").show();
-
-                var coordinates = d3.mouse(this);
-
-                if (d3.event.layerX < width / 2) {
-                    d3.select("#tooltip-container")
-                        .style("top", (d3.event.layerY + 15) + "px")
-                        .style("left", (d3.event.layerX + 15) + "px");
+        d3.json("us.json", function (error, us) {
+            if (error) throw error;
+            var features = topojson.feature(us, us.objects.states).features;
+            features.forEach(function (element, index, array) {
+                element['statecode'] = usMap[element["id"]];
+                if (donationDiff.hasOwnProperty(element.statecode)) {
+                    var obj = donationDiff[element.statecode];
+                    element.devDiff = obj.devDiff;
+                    element.total = obj.total;
                 } else {
-                    var tooltip_width = $("#tooltip-container").width();
-                    d3.select("#tooltip-container")
-                        .style("top", (d3.event.layerY + 15) + "px")
-                        .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+                    element.devDiff = -Infinity;
+                    element.total = 0;
                 }
-            })
-            .on("mouseout", function() {
-                $(this).attr("fill-opacity", "1.0");
-                $("#tooltip-container").hide();
             });
 
+            g.attr("id", "states")
+                .selectAll("path")
+                .data(features)
+                .enter().append("path")
+                .attr("d", path)
+                .attr("fill", getColor)
+                .on("click", clicked)
+                .attr('alt', function (d) {
+                    return d.statecode;
+                })
+                .on("mousemove", function (d) {
+                    var html = "";
 
-        g.append("path")
-            .datum(topojson.mesh(us, us.objects.states, function (a, b) {
-                return a !== b;
-            }))
-            .attr("id", "state-borders")
-            .attr("d", path);
-    });
+                    html += "<div class=\"tooltip_kv\">";
+                    html += "<span class=\"tooltip_key\">";
+                    html += d.statecode;
+                    html += "</span>: ";
+                    html += "<span class=\"tooltip_value\">";
+                    html += d.total;
+                    html += "";
+                    html += "</span>";
+                    html += "</div>";
+
+                    $("#tooltip-container").html(html);
+                    $(this).attr("fill-opacity", "0.8");
+                    $("#tooltip-container").show();
+
+                    var coordinates = d3.mouse(this);
+
+                    if (d3.event.layerX < width / 2) {
+                        d3.select("#tooltip-container")
+                            .style("top", (d3.event.layerY + 15) + "px")
+                            .style("left", (d3.event.layerX + 15) + "px");
+                    } else {
+                        var tooltip_width = $("#tooltip-container").width();
+                        d3.select("#tooltip-container")
+                            .style("top", (d3.event.layerY + 15) + "px")
+                            .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+                    }
+                })
+                .on("mouseout", function () {
+                    $(this).attr("fill-opacity", "1.0");
+                    $("#tooltip-container").hide();
+                });
+
+
+            g.append("path")
+                .datum(topojson.mesh(us, us.objects.states, function (a, b) {
+                    return a !== b;
+                }))
+                .attr("id", "state-borders")
+                .attr("d", path);
+        });
+    }
 
     function mouseover(d) {
         $('#tip-' + d.id).show();
     }
+
+    var colorScale = d3.scale.linear().domain([-1, 1]).range([-255, 255]);
+
+    function getColor(d) {
+
+        var key = d.devDiff;
+        var offset = colorScale(key);
+        if (offset < 0) {
+            offset = Math.abs(offset);
+            return d3.rgb(255, 255 - offset, 255 - offset);
+        }
+        return d3.rgb(255 - offset, 255, 255 - offset);
+    }
+
+    var summary = false;
+    function selected(d) {
+        $('#interactive-map').css('opacity', '0.5');
+        $('#summary-container').show();
+        summary = true;
+    }
+
+    function unselect() {
+        $('#interactive-map').css('opacity', '1');
+        $('#summary-container').hide();
+        clicked(null);
+        summary = false;
+    }
+
+    $('#close').click(unselect);
 
     function clicked(d) {
         var x, y, k;
@@ -119,6 +142,7 @@ function initialize(donationDiff) {
             y = centroid[1];
             k = 4;
             centered = d;
+            selected(d);
         } else {
             x = width / 2;
             y = height / 2;
@@ -127,8 +151,9 @@ function initialize(donationDiff) {
         }
 
         g.selectAll("path")
-            .classed("active", centered && function (d) {
-                return d === centered;
+            .attr("fill", function (d) {
+                var baseColor = getColor(d);
+                return d === centered ? baseColor.darker(1) : baseColor;
             });
 
         g.transition()
@@ -200,13 +225,11 @@ function initialize(donationDiff) {
         78: "VI"
     };
 
-}
 
-$(function() {
     $.ajax({
         method: 'GET',
         url: 'https://31h0fuyx4f.execute-api.us-west-2.amazonaws.com/prod/donations/deviation-difference'
-    }).done(function(response){
+    }).done(function (response) {
         initialize(response);
     });
 
