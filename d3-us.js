@@ -120,6 +120,7 @@ $(function () {
         $('#interactive-map').css('opacity', '0.5');
         $('#summary-container').show();
         summary = true;
+        pieChart(d.statecode);
     }
 
     function unselect() {
