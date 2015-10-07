@@ -122,6 +122,7 @@ $(function () {
         summary = true;
         //pieChart(d.statecode);
         barChart(d.statecode);
+        summaryData(d.statecode);
     }
 
     function unselect() {
@@ -239,5 +240,16 @@ $(function () {
     }).done(function (response) {
         initialize(response);
     });
+
+    function summaryData(state) {
+        $.ajax({
+            method: 'GET',
+            url: 'https://31h0fuyx4f.execute-api.us-west-2.amazonaws.com/prod/projects/' + state
+        }).done(function (response) {
+            $('#num-complete').text(response.completed_projects);
+            $('#num-active').text(response.live_projects);
+            $('#num-donors').text(response.num_donors);
+        });
+    }
 
 });
