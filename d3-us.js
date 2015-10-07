@@ -1,10 +1,10 @@
-$(function () {
-    var width = 1024,
-        height = 500,
+function initialize(donationDiff) {
+    var width = 600,
+        height = 375,
         centered;
 
     var projection = d3.geo.albersUsa()
-        .scale(1024)
+        .scale(800)
         .translate([width / 2, height / 2]);
 
     var path = d3.geo.path()
@@ -25,27 +25,36 @@ $(function () {
 
     var g = svg.append("g");
 
-    var colorScale = d3.scale.linear().domain([0, 50]).range([-255, 255]);
+    var colorScale = d3.scale.linear().domain([-1, 1]).range([-255, 255]);
 
     d3.json("us.json", function (error, us) {
         if (error) throw error;
         var features = topojson.feature(us, us.objects.states).features;
         features.forEach(function (element, index, array) {
             element['statecode'] = usMap[element["id"]];
+            if (donationDiff.hasOwnProperty(element.statecode)) {
+                var obj = donationDiff[element.statecode];
+                element.devDiff = obj.devDiff;
+                element.total = obj.total;
+            } else {
+                element.devDiff = -Infinity;
+                element.total = 0;
+            }
         });
 
-        g.attr("id", "states", 'statecode')
+        g.attr("id", "states")
             .selectAll("path")
             .data(features)
             .enter().append("path")
             .attr("d", path)
             .attr("fill", function (d) {
-                var offset = colorScale(d.id);
+                var key = d.devDiff;
+                var offset = colorScale(key);
                 if (offset < 0) {
                     offset = Math.abs(offset);
-                    return d3.rgb(200, 200 - offset, 200 - offset);
+                    return d3.rgb(255, 255 - offset, 255 - offset);
                 }
-                return d3.rgb(200 - offset, 200, 200 - offset);
+                return d3.rgb(255 - offset, 255, 255 - offset);
             })
             .on("click", clicked)
             .attr('alt', function (d) {
@@ -57,9 +66,9 @@ $(function () {
                 html += "<div class=\"tooltip_kv\">";
                 html += "<span class=\"tooltip_key\">";
                 html += d.statecode;
-                html += "</span>";
+                html += "</span>: ";
                 html += "<span class=\"tooltip_value\">";
-                html += d.id;
+                html += d.total;
                 html += "";
                 html += "</span>";
                 html += "</div>";
@@ -190,5 +199,15 @@ $(function () {
         74: "UM",
         78: "VI"
     };
+
+}
+
+$(function() {
+    $.ajax({
+        method: 'GET',
+        url: 'https://31h0fuyx4f.execute-api.us-west-2.amazonaws.com/prod/donations/deviation-difference'
+    }).done(function(response){
+        initialize(response);
+    });
 
 });
