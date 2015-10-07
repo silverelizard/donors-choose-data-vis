@@ -3,6 +3,14 @@
   pointer-events: all;
 }
 
+#legend {
+  width: 300px;
+  height: 20px;
+  margin-right: 25%;
+  background: linear-gradient(to right,  rgba(250,0,0,0.5) 0%,rgba(0,250,0,0.5) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+}
+
 #states {
   fill: #aaa;
 }
